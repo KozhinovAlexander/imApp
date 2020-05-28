@@ -11,7 +11,6 @@
 #ifndef WORKER_THREAD_H__
 #define WORKER_THREAD_H__
 
-#include <QObject>
 #include <QThread>
 #include <QImage>
 #include <QMutex>
@@ -26,8 +25,8 @@ public:
 
     void processImage(const QImage &image);
 
-signals:
-    // void sendBlock(const Block &block);
+// signals:
+//     void sendBlock(const Block &block);
 
 public slots:
     void stopProcess();

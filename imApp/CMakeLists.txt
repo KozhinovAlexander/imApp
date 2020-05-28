@@ -22,6 +22,10 @@ elseif("${CMAKE_GENERATOR}" MATCHES "(Win64|IA64)")
     message(STATUS "run build in windows x64")
 endif()
 
+set(COMPILER_VER "-9")
+set(CMAKE_C_COMPILER "${BUILD_TOOLS_ROOT}/gcc${COMPILER_VER}" CACHE INTERNAL "Set gcc compiler in internal cache")
+set(CMAKE_CXX_COMPILER "${BUILD_TOOLS_ROOT}/g++${COMPILER_VER}" CACHE INTERNAL "Set g++ compiler in internal cache")
+
 set(CMAKE_MAKE_PROGRAM "${BUILD_TOOLS_ROOT}/ninja" CACHE INTERNAL "Set variable in internal cache")
 message(STATUS "CMAKE_MAKE_PROGRAM: ${CMAKE_MAKE_PROGRAM}")
 
@@ -57,6 +61,24 @@ find_package(Qt5 COMPONENTS
 
 set(TS_FILES imApp_en_DE.ts)
 
+set(APP_DIR "${CMAKE_CURRENT_SOURCE_DIR}/app")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+
+set(APP_INC_DIR "${APP_DIR}/include")
+set(APP_SRC_DIR "${APP_DIR}/src")
+
+set(LIB_INC_DIR "${LIB_DIR}/include")
+set(LIB_SRC_DIR "${LIB_DIR}/src")
+
+include_directories(${APP_INC_DIR} ${LIB_INC_DIR})
+
+# Project specific directories:
+add_subdirectory(${APP_DIR})
+add_subdirectory(${LIB_DIR})
+
+set(PRJ_HDS "${APP_INC_DIR}/WorkerThread.h")
+set(PRJ_SRC "${APP_SRC_DIR}/WorkerThread.cpp")
+
 if(ANDROID)
   add_library(imApp SHARED
     main.cpp
@@ -64,6 +86,8 @@ if(ANDROID)
     mainwindow.h
     mainwindow.ui
     ${TS_FILES}
+    ${PRJ_HDS}
+    ${PRJ_SRC}
   )
 else()
   add_executable(imApp
@@ -72,14 +96,12 @@ else()
     mainwindow.h
     mainwindow.ui
     ${TS_FILES}
+    ${PRJ_HDS}
+    ${PRJ_SRC}
   )
 endif()
 
-# My specific libraries:
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/app")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib")
-
-target_link_libraries(imApp PRIVATE Qt5::Widgets)
+target_link_libraries(imApp PRIVATE Qt::Widgets)
 
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
 

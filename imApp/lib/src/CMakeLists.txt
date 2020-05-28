@@ -5,12 +5,12 @@
 
 cmake_minimum_required(VERSION 3.5)
 
-set(MODULE_FOLDER_NAME "app")
+# set(MODULE_NAME_0 "WorkerThread")
 
-include_directories("${imApp_SOURCE_DIR}/${MODULE_FOLDER_NAME}/include")
+# include_directories("${CMAKE_CURRENT_SOURCE_DIR}/../include")
 
-# add_library(${MODULE_FOLDER_NAME}
-#             WorkerThread.cpp
+# add_library(${MODULE_NAME_0} STATIC
+#             ${MODULE_NAME_0}.cpp
 #             )
 
-# target_link_libraries(${MODULE_FOLDER_NAME} PRIVATE Qt5::Widgets)
+# target_link_libraries(${MODULE_NAME_0} PRIVATE Qt::Widgets)

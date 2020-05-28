@@ -9,19 +9,19 @@
 
 #include "WorkerThread.h"
 
-/**
- * CTOR
- */
 WorkerThread::WorkerThread(QObject *parent) {
-    qDebug() << "Create WorkerThread from parent: " << parent;
+    Q_UNUSED(parent);
 }
 
-/**
- * DTOR
- */
 WorkerThread::~WorkerThread() {
 }
 
+void WorkerThread::processImage(const QImage &image) {
+    Q_UNUSED(image);
+}
+
+void WorkerThread::stopProcess() {
+}
+
 void WorkerThread::run() {
-    qDebug() << "Start WorkerThread";
 }
