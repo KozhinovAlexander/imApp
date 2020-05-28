@@ -33,7 +33,7 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # QtCreator supports the following variables for Android, which are identical to qmake Android variables.
@@ -49,7 +49,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-find_package(Qt5 COMPONENTS Widgets LinguistTools REQUIRED)
+find_package(Qt5 COMPONENTS
+                Widgets
+                LinguistTools
+                Core
+             REQUIRED)
 
 set(TS_FILES imApp_en_DE.ts)
 
@@ -71,6 +75,11 @@ else()
   )
 endif()
 
+# My specific libraries:
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/app")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lib")
+
 target_link_libraries(imApp PRIVATE Qt5::Widgets)
 
 qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+

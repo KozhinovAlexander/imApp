@@ -2,6 +2,8 @@
 
 #include <QApplication>
 
+#include "app/include/WorkerThread.h"
+
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
