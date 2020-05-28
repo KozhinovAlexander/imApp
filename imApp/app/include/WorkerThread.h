@@ -15,6 +15,18 @@
 #include <QImage>
 #include <QMutex>
 
+/**
+ * @brief The ProcessMode enum
+ */
+enum ProcessMode {
+    PROCESS_MODE_NONE,
+    PROCESS_MODE_HORIZONTAL,
+    PROCESS_MODE_VERTICAL,
+};
+
+/**
+ * @brief The WorkerThread class
+ */
 class WorkerThread : public QThread
 {
     Q_OBJECT
@@ -24,18 +36,22 @@ public:
     ~WorkerThread();
 
     void processImage(const QImage &image);
+    QStringList getProcessModes();
 
 // signals:
 //     void sendBlock(const Block &block);
 
 public slots:
-    void stopProcess();
+    void processStartStop();
+    void setProcessMode();
 
 protected:
     void run();
 
 private:
-    bool _abort;
+    bool _isStopped;
+    ProcessMode _currentProcMode;
+    std::map<QString, ProcessMode> _procModeMap;
     QImage _image;  // current loaded image to process and display
     QMutex _mutex;  // mutex for image memory protection
 };
