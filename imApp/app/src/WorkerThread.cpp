@@ -8,6 +8,10 @@
 #include <QtCore/QDebug>
 #include <QPushButton>
 #include <QComboBox>
+#include <QFileDialog>
+#include <QDir>
+#include <QString>
+#include <QImageReader>
 
 #include "WorkerThread.h"
 
@@ -21,6 +25,11 @@ WorkerThread::WorkerThread(QObject *parent) {
     this->_procModeMap.insert(std::pair<QString,ProcessMode>("None",PROCESS_MODE_NONE));
     this->_procModeMap.insert(std::pair<QString,ProcessMode>("Horizontal",PROCESS_MODE_HORIZONTAL));
     this->_procModeMap.insert(std::pair<QString,ProcessMode>("Vertical",PROCESS_MODE_VERTICAL));
+
+    this->_currPath = QString("");
+    this->_nextPath = QString("");
+
+    this->_currImgIdx = 0;
 }
 
 WorkerThread::~WorkerThread() {
@@ -46,6 +55,19 @@ QStringList WorkerThread::getProcessModes() {
 }
 
 /**
+ * @brief WorkerThread::setImgDir - sets new image directory
+ */
+void WorkerThread::setImgDir() {
+    auto fileDialog = qobject_cast<QFileDialog*>(sender());
+    Q_ASSERT(fileDialog);
+
+    this->_nextPath = fileDialog->directory().path();
+
+    qDebug() << "setImgDir: " << fileDialog->directory();
+    qDebug() << "setImgDir: path:" << this->_nextPath;
+}
+
+/**
  * @brief WorkerThread::getSleepTime - thread sleep time getter
  * @return unisgned int - current thread sleep time
  */
@@ -61,6 +83,14 @@ void WorkerThread::setSleepTime(const unsigned int newSleepTime_ms) {
     this->_SleepTime_ms = newSleepTime_ms;
 }
 
+/**
+ * @brief WorkerThread::getImage - provides image
+ * @return QImage - an image
+ */
+QImage WorkerThread::getImage() {
+    return this->_image.copy();
+}
+
 void WorkerThread::processStartStop() {
     auto button = qobject_cast<QPushButton*>(sender());
     Q_ASSERT(button);
@@ -69,10 +99,12 @@ void WorkerThread::processStartStop() {
         // Process stopped - run it again!
         qDebug() << "processStartStop: running";
         button->setDown(true);
+        // this->start();
     } else {
         // Process running - stop int!
         qDebug() << "processStartStop: stopped";
         button->setDown(false);
+        // this->quit();
     }
 
     this->_isStopped = !this->_isStopped;
@@ -95,16 +127,20 @@ void WorkerThread::setProcessMode() {
 
 void WorkerThread::run() {
     for(;;) {
-        qDebug() << "WorkerThread: running...";
+        if(!this->_isStopped) {
+            qDebug() << "WorkerThread: running...";
 
-        // Load image (@TODO):
-        this->_loadImage();
+            // Load image (@TODO):
+            this->_loadImage();
 
-        // Process image (@TODO):
-        this->_processImage();
+            // Process image (@TODO):
+            this->_processImage();
 
-        // Display image (@TODO):
-        this->_displayImage();
+            // Display image (@TODO):
+            this->_displayImage();
+        } else {
+            qDebug() << "WorkerThread: stopped...";
+        }
 
         this->msleep(this->_SleepTime_ms);
     }
@@ -115,13 +151,47 @@ void WorkerThread::run() {
  */
 void WorkerThread::_loadImage() {
 
+    // Get list of images in path:
+    if (this->_currPath.size()) {
+        QDir dir(this->_nextPath);
+        dir.setFilter(QDir::Files | QDir::NoSymLinks);
+        dir.setSorting(QDir::Size | QDir::Reversed);
+        dir.setNameFilters(QStringList()<<"*.jpg" << "*.bmp" << "*.tiff");
+
+        QFileInfoList list = dir.entryInfoList();
+
+        // Load image:
+        qDebug() << "this->_currImgIdx: " << this->_currImgIdx;
+        qDebug() << "list.size(): " << list.size();
+
+        if ( this->_currImgIdx < static_cast<unsigned int>(list.size()) ) {
+            QString imgName = this->_nextPath + "/" + list.at(this->_currImgIdx).fileName();
+            qDebug() << "_loadImage: loading image: " << imgName;
+            QImageReader reader(imgName);
+            this->_image = reader.read();
+            qDebug() << "_loadImage: loaded image size: " << this->_image.size();
+        }
+
+        // Update images index:
+        this->_currImgIdx++;
+
+        if ( this->_currImgIdx >= static_cast<unsigned int>(list.size())) {
+            // Start from beginning:
+            this->_currImgIdx = 0;
+        }
+    }
+
+    // Update path:
+    this->_currPath = this->_nextPath;
 }
 
 /**
  * @brief WorkerThread::_displayImage - display processed image
  */
 void WorkerThread::_displayImage() {
-
+    if (!this->_image.isNull()) {
+        emit this->sendImage();
+    }
 }
 
 /**
@@ -135,9 +205,11 @@ void WorkerThread::_processImage() {
         break;
     case PROCESS_MODE_VERTICAL:
         qDebug() << "processImage: PROCESS_MODE_VERTICAL";
+        this->_image = this->_image.mirrored(false, true);
         break;
     case PROCESS_MODE_HORIZONTAL:
         qDebug() << "processImage: PROCESS_MODE_HORIZONTAL";
+        this->_image = this->_image.mirrored(true, false);
         break;
     default:
         qDebug() << "processImage: !!!unknown process mode!!!";

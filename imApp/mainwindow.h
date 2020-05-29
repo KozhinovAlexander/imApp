@@ -2,6 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QFileDialog>
 
 #include "WorkerThread.h"
 
@@ -20,7 +21,11 @@ public:
     void configureWorkerThreadControls(WorkerThread &p_wtr);
     void initOpenFileDialog();
 
+public slots:
+    void rcvDisplayImage();
+
 private:
     Ui::MainWindow *ui;
+    QFileDialog *_dialog;
 };
 #endif // MAINWINDOW_H

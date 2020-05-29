@@ -28,16 +28,5 @@
         <source>Processing Mode:</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <location filename="mainwindow.cpp" line="44"/>
-        <source>Open Image</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <location filename="mainwindow.cpp" line="46"/>
-        <source>Image Files (*.jpg *.tiff *.bmp)</source>
-        <oldsource>Image Files (*.jpg *.tif *.bmp)</oldsource>
-        <translation type="unfinished"></translation>
-    </message>
 </context>
 </TS>

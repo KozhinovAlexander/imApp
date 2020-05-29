@@ -14,6 +14,8 @@
 #include <QThread>
 #include <QImage>
 #include <QMutex>
+#include <QString>
+#include <QImage>
 
 #define DEFAULT_THREAD_SLEEP_TIME_MS    ( 2000U )  //! default thread sleep time in ms
 
@@ -39,11 +41,15 @@ public:
 
     QStringList getProcessModes();
 
+    void setImgDir();
+
     unsigned int getSleepTime();
     void setSleepTime(const unsigned int newSleepTime);
 
-// signals:
-//     void sendBlock(const Block &block);
+    QImage getImage();
+
+signals:
+    void sendImage();
 
 public slots:
     void processStartStop();
@@ -59,10 +65,16 @@ private:
 
     bool _isStopped;
     unsigned int _SleepTime_ms = DEFAULT_THREAD_SLEEP_TIME_MS;  // thread sleep time in ms
+
     ProcessMode _currentProcMode;
     std::map<QString, ProcessMode> _procModeMap;
+
     QImage _image;  // current loaded image to process and display
     QMutex _mutex;  // mutex for image memory protection
+
+    QString _currPath;
+    QString _nextPath;
+    unsigned int _currImgIdx;  // current image index in the driectory list
 };
 
 #endif  // WORKER_THREAD_H__
