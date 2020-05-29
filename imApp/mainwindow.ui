@@ -55,7 +55,7 @@
           <enum>QLayout::SetMinimumSize</enum>
          </property>
          <item>
-          <widget class="QPushButton" name="bp_DefineImg">
+          <widget class="QPushButton" name="pb_DefineImgFolder">
            <property name="text">
             <string>Define Image Folder</string>
            </property>

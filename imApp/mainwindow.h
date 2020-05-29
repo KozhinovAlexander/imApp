@@ -17,8 +17,10 @@ public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
 
+    void configureWorkerThreadControls(WorkerThread &p_wtr);
+    void initOpenFileDialog();
+
 private:
     Ui::MainWindow *ui;
-    WorkerThread *_workerThread;
 };
 #endif // MAINWINDOW_H

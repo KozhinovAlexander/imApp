@@ -26,10 +26,6 @@ WorkerThread::WorkerThread(QObject *parent) {
 WorkerThread::~WorkerThread() {
 }
 
-void WorkerThread::processImage(const QImage &image) {
-    Q_UNUSED(image);
-}
-
 /**
  * @brief WorkerThread::getProcessModes - provides list of process modes
  * @return QStringList - the list of processing modes
@@ -38,6 +34,7 @@ QStringList WorkerThread::getProcessModes() {
     auto procModesList = QStringList();
 
     for( auto const& p : this->_procModeMap ) {
+        Q_UNUSED(p);
         procModesList.append("");
     }
 
@@ -46,6 +43,22 @@ QStringList WorkerThread::getProcessModes() {
     }
 
     return procModesList;
+}
+
+/**
+ * @brief WorkerThread::getSleepTime - thread sleep time getter
+ * @return unisgned int - current thread sleep time
+ */
+unsigned int WorkerThread::getSleepTime() {
+    return this->_SleepTime_ms;
+}
+
+/**
+ * @brief WorkerThread::setSleepTime - thread sleep time setter
+ * @param newSleepTime - new sleep time in ms
+ */
+void WorkerThread::setSleepTime(const unsigned int newSleepTime_ms) {
+    this->_SleepTime_ms = newSleepTime_ms;
 }
 
 void WorkerThread::processStartStop() {
@@ -81,4 +94,54 @@ void WorkerThread::setProcessMode() {
 }
 
 void WorkerThread::run() {
+    for(;;) {
+        qDebug() << "WorkerThread: running...";
+
+        // Load image (@TODO):
+        this->_loadImage();
+
+        // Process image (@TODO):
+        this->_processImage();
+
+        // Display image (@TODO):
+        this->_displayImage();
+
+        this->msleep(this->_SleepTime_ms);
+    }
+}
+
+/**
+ * @brief WorkerThread::_loadImage - load new image
+ */
+void WorkerThread::_loadImage() {
+
+}
+
+/**
+ * @brief WorkerThread::_displayImage - display processed image
+ */
+void WorkerThread::_displayImage() {
+
+}
+
+/**
+ * @brief WorkerThread::_processImage - processes current image
+ */
+void WorkerThread::_processImage() {
+
+    switch(this->_currentProcMode) {
+    case PROCESS_MODE_NONE:
+        qDebug() << "processImage: PROCESS_MODE_NONE";
+        break;
+    case PROCESS_MODE_VERTICAL:
+        qDebug() << "processImage: PROCESS_MODE_VERTICAL";
+        break;
+    case PROCESS_MODE_HORIZONTAL:
+        qDebug() << "processImage: PROCESS_MODE_HORIZONTAL";
+        break;
+    default:
+        qDebug() << "processImage: !!!unknown process mode!!!";
+        Q_ASSERT(false);
+        break;
+    }
 }

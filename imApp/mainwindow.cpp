@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QtCore/QDebug>
+#include <QFileDialog>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,22 +10,39 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    this->_workerThread = new WorkerThread(this);
-
-    auto list = this->_workerThread->getProcessModes();
-    qDebug() << "list: " << list;
-    ui->cb_ProcMode->addItems(list);
-
-    connect(ui->pb_StartStop, &QPushButton::clicked,
-            this->_workerThread,
-            &WorkerThread::processStartStop);
-    connect(ui->cb_ProcMode, &QComboBox::currentTextChanged,
-            this->_workerThread,
-            &WorkerThread::setProcessMode);
+    connect(ui->pb_DefineImgFolder, &QPushButton::clicked, this,
+            &MainWindow::initOpenFileDialog);
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+/**
+ * @brief MainWindow::configureWorkerThreadControls -
+ *                      configures worker thread controls
+ * @param wtr - WorkerThread instance
+ */
+void MainWindow::configureWorkerThreadControls(WorkerThread &p_wtr) {
+    auto list = p_wtr.getProcessModes();
+    this->ui->cb_ProcMode->addItems(list);
+    qDebug() << "list: " << list;
+
+    connect(this->ui->pb_StartStop, &QPushButton::clicked,
+            &p_wtr, &WorkerThread::processStartStop);
+    connect(this->ui->cb_ProcMode, &QComboBox::currentTextChanged,
+            &p_wtr, &WorkerThread::setProcessMode);
+}
+
+/**
+ * @brief MainWindow::initOpenFileDialog - initialize open file dialog
+ */
+void MainWindow::initOpenFileDialog() {
+    qDebug() << "initOpenFileDialog: begin";
+
+    QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
+                                                    QDir::currentPath(),
+                                                    tr("Image Files (*.png *.jpg *.bmp)"));
 }
 

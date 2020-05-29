@@ -15,6 +15,8 @@
 #include <QImage>
 #include <QMutex>
 
+#define DEFAULT_THREAD_SLEEP_TIME_MS    ( 2000U )  //! default thread sleep time in ms
+
 /**
  * @brief The ProcessMode enum
  */
@@ -35,8 +37,10 @@ public:
     WorkerThread(QObject *parent = nullptr);
     ~WorkerThread();
 
-    void processImage(const QImage &image);
     QStringList getProcessModes();
+
+    unsigned int getSleepTime();
+    void setSleepTime(const unsigned int newSleepTime);
 
 // signals:
 //     void sendBlock(const Block &block);
@@ -49,7 +53,12 @@ protected:
     void run();
 
 private:
+    void _loadImage();
+    void _processImage();
+    void _displayImage();
+
     bool _isStopped;
+    unsigned int _SleepTime_ms = DEFAULT_THREAD_SLEEP_TIME_MS;  // thread sleep time in ms
     ProcessMode _currentProcMode;
     std::map<QString, ProcessMode> _procModeMap;
     QImage _image;  // current loaded image to process and display
