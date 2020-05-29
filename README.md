@@ -16,7 +16,7 @@ Following steps needed to be done for the comilation:
 
 3. Run/Debug from your IDE or Qt Creator (recommended).
 
-# HoTo run
+# HoTo Run
 
 After application is started, the slideshow does not runs. You need first chhose the folder with [sample images](https://github.com/Nukersson/imApp/tree/master/images) and the press `Start/Stop` button.
  
