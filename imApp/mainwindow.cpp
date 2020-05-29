@@ -43,6 +43,6 @@ void MainWindow::initOpenFileDialog() {
 
     QString fileName = QFileDialog::getOpenFileName(this, tr("Open Image"),
                                                     QDir::currentPath(),
-                                                    tr("Image Files (*.png *.jpg *.bmp)"));
+                                                    tr("Image Files (*.jpg *.tiff *.bmp)"));
 }
 
